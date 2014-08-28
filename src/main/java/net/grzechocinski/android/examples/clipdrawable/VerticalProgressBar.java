@@ -13,8 +13,6 @@ import java.util.TimerTask;
 import net.grzechocinski.android.examples.domain.Percent;
 
 public class VerticalProgressBar extends ImageView {
-
-    private static final String TAG = "VerticalProgressBar";
     /**
      * @see <a href="http://developer.android.com/reference/android/graphics/drawable/ClipDrawable.html">ClipDrawable</a>
      */
@@ -28,8 +26,6 @@ public class VerticalProgressBar extends ImageView {
         public void handleMessage(Message msg) {
             if (msg.what == 0x1233) { // down
                 // 修改ClipDrawable的level值
-                setImageLevel(currentLevel);
-            }else if(msg.what == 2){ // up
                 setImageLevel(currentLevel);
             }
         }
@@ -51,17 +47,14 @@ public class VerticalProgressBar extends ImageView {
         timer.schedule(new TimerTask() {
             boolean downing = true;
             public void run() {
-                Message msg = handler.obtainMessage();
+                Message msg = handler.obtainMessage(0x1233);
                 if(downing){
                     if(currentLevel <= 0){
                         currentLevel = 0;
                         downing = false;
                     }else{
                         currentLevel -= offset;
-                        // 发送消息,通知应用修改ClipDrawable对象的level值
                     }
-                    msg.what = 0x1233;
-                    handler.sendMessage(msg);
                 }else{//up
                     if(currentLevel >= finalLevel){
                         currentLevel = finalLevel;
@@ -70,12 +63,10 @@ public class VerticalProgressBar extends ImageView {
                     }else{
                         currentLevel += offset;
                     }
-                    msg.what = 2;
-                    handler.sendMessage(msg);
                 }
-
+                handler.sendMessage(msg);
             }
-        }, 0, 100);
+        }, 0, 50);
         
     }
 }
